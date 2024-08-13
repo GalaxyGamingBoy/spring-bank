@@ -1,0 +1,27 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "APISpec",
+    "version": "v0.0.0"
+  },
+  "host": "localhost:8080",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/",
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Ping Server",
+        "description": "Pings the main server endpoint to confirm that the server is actually running.",
+        "operationId": "35d8fc2e-ddf9-4e33-af98-a5df1b94bc9b",
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
