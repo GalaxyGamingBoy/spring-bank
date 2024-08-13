@@ -15,6 +15,184 @@
         "summary": "Ping Server",
         "description": "Pings the main server endpoint to confirm that the server is actually running.",
         "operationId": "35d8fc2e-ddf9-4e33-af98-a5df1b94bc9b",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    },
+    "/accounts/register": {
+      "post": {
+        "summary": "Register Account",
+        "description": "",
+        "operationId": "f2a6cf7f-4eca-4573-a308-084ff63aab1c",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "{\"type\":\"INDIVIDUAL\",\"username\":\"test_username\",\"password\":\"test_password\"}"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    },
+    "/accounts/login": {
+      "post": {
+        "summary": "Login Account",
+        "description": "",
+        "operationId": "015c5f2f-b32a-4dca-8648-f945d7ac9c48",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "{\"type\":\"INDIVIDUAL\",\"username\":\"test_username\",\"password\":\"test_password\"}"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    },
+    "/accounts/test/type": {
+      "put": {
+        "summary": "Change Account Type",
+        "description": "",
+        "operationId": "2adee342-5334-4804-a81a-c5ab4a0d8111",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    },
+    "/accounts/test/username": {
+      "put": {
+        "summary": "Change Account Username",
+        "description": "",
+        "operationId": "4d4b0881-4961-4292-a16b-c3b01a349ad7",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    },
+    "/accounts/test/password": {
+      "put": {
+        "summary": "Change Account Password",
+        "description": "",
+        "operationId": "5b53f906-d40c-4945-8faa-d0eae58bd919",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Reset Account Password",
+        "description": "",
+        "operationId": "724075f0-4432-4fd4-9499-d480b955dd2e",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "no response description was provided for this operation"
+          }
+        }
+      }
+    },
+    "/accounts/test": {
+      "delete": {
+        "summary": "Delete Account",
+        "description": "",
+        "operationId": "467e7891-8571-42e4-965d-8d4861e1a88f",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "",
+            "name": "Cookie",
+            "required": false,
+            "in": "header"
+          }
+        ],
         "responses": {
           "default": {
             "description": "no response description was provided for this operation"
