@@ -1,19 +1,32 @@
 package xyz.mariosm.bank.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import xyz.mariosm.bank.data.Account;
+import xyz.mariosm.bank.service.AccountService;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/accounts")
 public class AccountsController {
+    private final AccountService accountService;
+
+    @Autowired
+    public AccountsController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
     @GetMapping(path = "/")
     Map<String, Boolean> index() {
         return Map.of("status", true);
     }
 
     @PostMapping(path = "/register")
-    void register() {}
+    Account register(@RequestBody Account account) {
+        account = accountService.hashAccount(account);
+        return account;
+    }
 
     @PostMapping(path = "/login")
     void login() {}

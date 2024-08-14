@@ -1,4 +1,4 @@
-package xyz.mariosm.bank;
+package xyz.mariosm.bank.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ public class SecurityConfig {
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(matcherRegistry -> matcherRegistry
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/accounts/**").permitAll())
-                .httpBasic(Customizer.withDefaults());
+                        .requestMatchers("/accounts/register").permitAll());
+//                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
