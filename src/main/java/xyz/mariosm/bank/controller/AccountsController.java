@@ -3,6 +3,7 @@ package xyz.mariosm.bank.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xyz.mariosm.bank.data.Account;
+import xyz.mariosm.bank.exceptions.InternalServerException;
 import xyz.mariosm.bank.service.AccountService;
 
 import java.util.Map;
@@ -23,9 +24,8 @@ public class AccountsController {
     }
 
     @PostMapping(path = "/register")
-    Account register(@RequestBody Account account) {
-        account = accountService.hashAccount(account);
-        return account;
+    Account register(@RequestBody Account account) throws InternalServerException {
+        return accountService.insertAccount(accountService.hashAccount(account));
     }
 
     @PostMapping(path = "/login")
