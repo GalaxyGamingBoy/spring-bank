@@ -1,16 +1,24 @@
 package xyz.mariosm.bank.data;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
 @Document
 public class Account {
+    @Id
     private ObjectId id;
+    @Indexed(unique = true)
     private String username;
     private String password;
     private AccountTypes type;
+
+
+    public Account() {
+    }
 
     public Account(String username, String password) {
         this(username, password, AccountTypes.INDIVIDUAL);
@@ -21,6 +29,7 @@ public class Account {
         this.password = password;
         this.type = type;
     }
+
 
     public String getUsername() {
         return username;
@@ -45,6 +54,7 @@ public class Account {
     public void setType(AccountTypes type) {
         this.type = type;
     }
+
 
     @Override
     public boolean equals(Object o) {
