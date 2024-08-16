@@ -16,7 +16,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .cors(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((matcherRegistry -> matcherRegistry
-                    .requestMatchers("/accounts/**").permitAll()
+                    .requestMatchers("/accounts/auth/**").permitAll()
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()))
             .httpBasic(Customizer.withDefaults());

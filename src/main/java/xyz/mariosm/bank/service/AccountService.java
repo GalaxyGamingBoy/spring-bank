@@ -5,7 +5,9 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import xyz.mariosm.bank.data.Account;
+import xyz.mariosm.bank.data.AccountTypes;
 import xyz.mariosm.bank.exceptions.AccountExistsException;
+import xyz.mariosm.bank.exceptions.AccountNotFoundException;
 import xyz.mariosm.bank.exceptions.InternalServerException;
 import xyz.mariosm.bank.repository.AccountRepository;
 
@@ -32,5 +34,14 @@ public class AccountService {
                 throw new AccountExistsException(account.getUsername());
             throw new InternalServerException(ex.getMessage());
         }
+    }
+
+    public Account fetchAccount(String username, AccountTypes type) throws AccountNotFoundException {
+        return accountRepository.findByUsernameAndType(username, type)
+                                .orElseThrow(() -> new AccountNotFoundException(username, type));
+    }
+
+    public Boolean checkAccountPassword(Account account, String password) {
+        return BCrypt.checkpw(password, account.getPassword());
     }
 }
