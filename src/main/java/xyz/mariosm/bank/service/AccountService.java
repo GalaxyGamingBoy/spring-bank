@@ -1,5 +1,6 @@
 package xyz.mariosm.bank.service;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -26,6 +27,10 @@ public class AccountService {
         return account;
     }
 
+    public Boolean checkAccountPassword(Account account, String password) {
+        return BCrypt.checkpw(password, account.getPassword());
+    }
+
     public Account insertAccount(Account account) throws InternalServerException {
         try {
             return accountRepository.save(account);
@@ -41,7 +46,11 @@ public class AccountService {
                                 .orElseThrow(() -> new AccountNotFoundException(username, type));
     }
 
-    public Boolean checkAccountPassword(Account account, String password) {
-        return BCrypt.checkpw(password, account.getPassword());
+    public Account updateAccount(Account account) throws AccountNotFoundException {
+        ObjectId id = accountRepository.findIdByUsername(account.getUsername())
+                               .orElseThrow(() -> new AccountNotFoundException(account.getUsername(), account.getType()));
+        account.setId(id);
+
+        return accountRepository.save(account);
     }
 }

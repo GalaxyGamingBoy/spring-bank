@@ -1,9 +1,13 @@
 package xyz.mariosm.bank.controller;
 
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.web.bind.annotation.*;
 import xyz.mariosm.bank.data.Account;
+import xyz.mariosm.bank.data.AccountTypes;
 import xyz.mariosm.bank.exceptions.AccountNotFoundException;
 import xyz.mariosm.bank.exceptions.InternalServerException;
 import xyz.mariosm.bank.exceptions.InvalidDataException;
@@ -11,6 +15,7 @@ import xyz.mariosm.bank.service.AccountService;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/accounts")
@@ -47,7 +52,12 @@ public class AccountsController {
     }
 
     @PutMapping(path = "/{user}/type")
-    void changeAccountType() {}
+    void changeAccountType(@PathParam("user") String username, @RequestBody Account account) {
+        if (!Objects.equals(account.getUsername(), username))
+            throw new InvalidDataException("Account and path username mismatch!");
+
+        accountService.updateAccount(account);
+    }
 
     @PutMapping(path = "/{user}/username")
     void changeAccountUsername() {}
