@@ -21,23 +21,29 @@ public class JwtService {
     private String issuer;
 
     @Value("${jwt.claims.duration}")
-    private Integer duration;
+    private String duration;
 
     public String getUsername(String token) {
-        return "";
+        return this.extractClaim(token, Claims::getSubject);
     }
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                    .issuer(issuer)
                    .subject(userDetails.getUsername())
-                   .expiration(new Date(System.currentTimeMillis() + duration))
+                   .expiration(new Date(System.currentTimeMillis() + Long.parseLong(duration)))
                    .issuedAt(new Date(System.currentTimeMillis()))
                    .signWith(getIssuingKey()).compact();
     }
 
     public boolean verifyToken(String token, UserDetails userDetails) {
-        return true;
+        final String tokenUsername = this.getUsername(token);
+        final Date tokenExpiration = this.extractClaim(token, Claims::getExpiration);
+        final Date tokenIssued = this.extractClaim(token, Claims::getIssuedAt);
+
+        return tokenUsername.equals(userDetails.getUsername())
+               && tokenIssued.before(new Date())
+               && tokenExpiration.after(new Date());
     }
 
     private SecretKey getIssuingKey() {
@@ -45,7 +51,7 @@ public class JwtService {
     }
 
     private Claims extractClaims(String token) {
-        return Jwts.parser().decryptWith(getIssuingKey()).build().parseUnsecuredClaims(token).getPayload();
+        return Jwts.parser().verifyWith(getIssuingKey()).build().parseSignedClaims(token).getPayload();
     }
 
     private<T> T extractClaim(String token, Function<Claims, T> claim) {

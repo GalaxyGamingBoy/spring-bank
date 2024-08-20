@@ -4,8 +4,11 @@ import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.web.bind.annotation.*;
+import xyz.mariosm.bank.dao.AuthService;
 import xyz.mariosm.bank.data.Account;
 import xyz.mariosm.bank.data.AccountTypes;
 import xyz.mariosm.bank.exceptions.AccountNotFoundException;
@@ -21,11 +24,14 @@ import java.util.Objects;
 @RequestMapping(path = "/accounts")
 public class AccountsController {
     private final AccountService accountService;
+    private final AuthService authService;
+
     private final static String[] invalidUsernames = {"auth"};
 
     @Autowired
-    public AccountsController(AccountService accountService) {
+    public AccountsController(AccountService accountService, AuthService authService) {
         this.accountService = accountService;
+        this.authService = authService;
     }
 
     @GetMapping(path = "/")
@@ -35,20 +41,12 @@ public class AccountsController {
 
     @PostMapping(path = "/auth/register")
     Map<String, Object> register(@RequestBody Account account) throws InternalServerException, InvalidDataException {
-        if (Arrays.asList(invalidUsernames).contains(account.getUsername()))
-            throw new InvalidDataException(account.getUsername());
-
-        account = accountService.insertAccount(accountService.hashAccount(account));
-        return Map.of("ok", true, "account", account);
+        return authService.register(account);
     }
 
     @PostMapping(path = "/auth/login")
     Map<String, Object> login(@RequestBody Account account) throws AccountNotFoundException, AccessDeniedException {
-        Account databaseRecord = accountService.fetchAccount(account.getUsername(), account.getType());
-        if (!accountService.checkAccountPassword(databaseRecord, account.getPassword()))
-            throw new AccessDeniedException("Incorrect Username/Password Provided");
-
-        return Map.of("ok", true, "jwt", "");
+        return authService.login(account);
     }
 
     @PutMapping(path = "/{user}/type")

@@ -90,6 +90,13 @@ public class Account implements UserDetails {
         this.type = type;
     }
 
+    public AccountRoles getRole() {
+        return role;
+    }
+
+    public void setRole(AccountRoles role) {
+        this.role = role;
+    }
 
     @Override
     public boolean equals(Object o) {
