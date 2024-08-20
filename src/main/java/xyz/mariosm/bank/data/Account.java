@@ -4,17 +4,23 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Document
-public class Account {
+public class Account implements UserDetails {
     @Id
     private ObjectId id;
     @Indexed(unique = true)
     private String username;
     private String password;
     private AccountTypes type;
+    private AccountRoles role;
 
 
     public Account() {
@@ -28,11 +34,37 @@ public class Account {
         this.username = username;
         this.password = password;
         this.type = type;
+        this.role = AccountRoles.USER;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+    }
 
-    public void setId (ObjectId id) { this.id = id; }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void setId(ObjectId id) { this.id = id; }
+
+    @Override
     public String getUsername() {
         return username;
     }
@@ -41,6 +73,7 @@ public class Account {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
