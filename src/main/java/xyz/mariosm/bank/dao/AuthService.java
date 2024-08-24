@@ -3,16 +3,15 @@ package xyz.mariosm.bank.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.ArrayUtils;
 import xyz.mariosm.bank.data.Account;
 import xyz.mariosm.bank.data.AccountRoles;
-import xyz.mariosm.bank.exceptions.AccountNotFoundException;
-import xyz.mariosm.bank.repository.AccountRepository;
+import xyz.mariosm.bank.exceptions.InvalidDataException;
 import xyz.mariosm.bank.service.AccountService;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
 @Service
@@ -20,17 +19,22 @@ public class AuthService {
     private final AccountService accountService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    private final static String[] invalidUsernames = {"auth"};
 
     @Autowired
-    public AuthService(AccountService accountService, JwtService jwtService, AuthenticationManager authenticationManager, AccountRepository accountRepository) {
+    public AuthService(AccountService accountService, JwtService jwtService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.accountService = accountService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Map<String, Object> register(Account account) {
+        if (Arrays.asList(invalidUsernames).contains(account.getUsername()))
+            throw new InvalidDataException("Invalid Username!");
+
         account.setRole(AccountRoles.USER);
         account = accountService.insertAccount(accountService.hashAccount(account));
         String jwt = jwtService.generateToken(account);

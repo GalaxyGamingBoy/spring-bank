@@ -3,7 +3,6 @@ package xyz.mariosm.bank.service;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.mariosm.bank.data.Account;
@@ -16,20 +15,17 @@ import xyz.mariosm.bank.repository.AccountRepository;
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Account hashAccount(Account account) {
-        String hashedPassword = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
-        account.setPassword(hashedPassword);
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
         return account;
-    }
-
-    public Boolean checkAccountPassword(Account account, String password) {
-        return BCrypt.checkpw(password, account.getPassword());
     }
 
     public Account insertAccount(Account account) throws InternalServerException {
@@ -45,13 +41,5 @@ public class AccountService {
     public Account fetchAccount(String username, AccountTypes type) throws AccountNotFoundException {
         return accountRepository.findByUsernameAndType(username, type)
                                 .orElseThrow(() -> new AccountNotFoundException(username, type));
-    }
-
-    public Account updateAccount(Account account) throws AccountNotFoundException {
-        ObjectId id = accountRepository.findIdByUsername(account.getUsername())
-                               .orElseThrow(() -> new AccountNotFoundException(account.getUsername(), account.getType()));
-        account.setId(id);
-
-        return accountRepository.save(account);
     }
 }
