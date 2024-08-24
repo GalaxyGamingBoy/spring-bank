@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import xyz.mariosm.bank.dao.AuthService;
 import xyz.mariosm.bank.data.Account;
 import xyz.mariosm.bank.exceptions.InvalidDataException;
-import xyz.mariosm.bank.service.AccountService;
 
 import java.util.Map;
 import java.util.Objects;
@@ -14,12 +13,10 @@ import java.util.Objects;
 @RestController
 @RequestMapping(path = "/accounts")
 public class AccountsController {
-    private final AccountService accountService;
     private final AuthService authService;
 
     @Autowired
-    public AccountsController(AccountService accountService, AuthService authService) {
-        this.accountService = accountService;
+    public AccountsController(AuthService authService) {
         this.authService = authService;
     }
 
