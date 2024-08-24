@@ -1,4 +1,4 @@
-package xyz.mariosm.bank.dao;
+package xyz.mariosm.bank.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

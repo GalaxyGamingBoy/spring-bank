@@ -1,4 +1,4 @@
-package xyz.mariosm.bank.dao;
+package xyz.mariosm.bank.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

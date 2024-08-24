@@ -1,5 +1,11 @@
 package xyz.mariosm.bank.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,23 +19,32 @@ import java.util.List;
 import java.util.Objects;
 
 @Document
+@NoArgsConstructor
 public class Account implements UserDetails {
     @Id
+    @Getter @Setter
+    @JsonIgnore
     private ObjectId id;
+
     @Indexed(unique = true)
+    @Setter @NonNull
     private String username;
+
+    @Setter
     private String password;
+
+    @Getter @Setter @NonNull
     private AccountTypes type;
+
+    @JsonIgnore
+    @Getter @Setter
     private AccountRoles role;
-
-
-    public Account() {
-    }
 
     public Account(String username, String password) {
         this(username, password, AccountTypes.INDIVIDUAL);
     }
 
+    @JsonCreator
     public Account(String username, String password, AccountTypes type) {
         this.username = username;
         this.password = password;
@@ -43,59 +58,13 @@ public class Account implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    public void setId(ObjectId id) { this.id = id; }
-
-    @Override
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public AccountTypes getType() {
-        return type;
-    }
-
-    public void setType(AccountTypes type) {
-        this.type = type;
-    }
-
-    public AccountRoles getRole() {
-        return role;
-    }
-
-    public void setRole(AccountRoles role) {
-        this.role = role;
     }
 
     @Override

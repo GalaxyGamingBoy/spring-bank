@@ -1,5 +1,6 @@
 package xyz.mariosm.bank.service;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,5 +41,14 @@ public class AccountService {
     public Account fetchAccount(String username, AccountTypes type) throws AccountNotFoundException {
         return accountRepository.findByUsernameAndType(username, type)
                                 .orElseThrow(() -> new AccountNotFoundException(username, type));
+    }
+
+    public Account updateAccountType(String username, AccountTypes type) {
+        Account accountDB = this.accountRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new AccountNotFoundException(username, type));
+
+        accountDB.setType(type);
+        return this.accountRepository.save(accountDB);
     }
 }

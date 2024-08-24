@@ -1,4 +1,4 @@
-package xyz.mariosm.bank.dao;
+package xyz.mariosm.bank.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import xyz.mariosm.bank.data.Account;
 import xyz.mariosm.bank.data.AccountRoles;
 import xyz.mariosm.bank.exceptions.InvalidDataException;
-import xyz.mariosm.bank.service.AccountService;
 
 import java.util.Arrays;
 import java.util.Map;
