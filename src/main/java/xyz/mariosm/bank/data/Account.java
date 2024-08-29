@@ -13,35 +13,38 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import xyz.mariosm.bank.http.AccountDetailsRequest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@Setter
 @Document
 @NoArgsConstructor
 public class Account implements UserDetails {
     @Id
-    @Getter @Setter
+    @Getter
     @JsonIgnore
     private ObjectId id;
 
     @Indexed(unique = true)
-    @Setter @NonNull
+    @NonNull
     private String username;
 
-    @Setter
     private String password;
 
-    @Getter @Setter @NonNull
+    @Getter
+    @NonNull
     private AccountTypes type;
 
     @JsonIgnore
-    @Getter @Setter
+    @Getter
     private AccountRoles role;
 
-    public Account(String username, String password) {
-        this(username, password, AccountTypes.INDIVIDUAL);
+    public Account(AccountDetailsRequest details) {
+        this(details.getUsername(), details.getPassword(), details.getType());
     }
 
     @JsonCreator
@@ -54,7 +57,17 @@ public class Account implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role.name()));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        // Add the current role
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + getRole().name()));
+
+        // If super admin also add admin role
+        if (getRole() == AccountRoles.SUPER_ADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+
+        return authorities;
     }
 
     @Override

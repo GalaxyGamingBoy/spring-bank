@@ -1,17 +1,19 @@
 package xyz.mariosm.bank.controller;
 
-import jakarta.websocket.server.PathParam;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import xyz.mariosm.bank.data.AccountTypes;
+import xyz.mariosm.bank.http.AccountDetailsRequest;
+import xyz.mariosm.bank.http.ChangeTypeRequest;
 import xyz.mariosm.bank.service.AccountService;
 import xyz.mariosm.bank.service.AuthService;
 import xyz.mariosm.bank.data.Account;
-import xyz.mariosm.bank.exceptions.InvalidDataException;
 
 import java.util.Map;
-import java.util.Objects;
 
+@Log4j2
 @RestController
 @RequestMapping(path = "/accounts")
 public class AccountsController {
@@ -30,36 +32,38 @@ public class AccountsController {
     }
 
     @PostMapping(path = "/auth/register")
-    Map<String, Object> register(@RequestBody Account account) {
-        System.out.println(account.getRole());
-        return authService.register(account);
+    Map<String, Object> register(@RequestBody AccountDetailsRequest account) {
+        return authService.register(new Account(account));
     }
 
     @PostMapping(path = "/auth/login")
-    Map<String, Object> login(@RequestBody Account account) {
-        return authService.login(account);
+    Map<String, Object> login(@RequestBody AccountDetailsRequest account) {
+        return authService.login(new Account(account));
     }
 
-    @PutMapping(path = "/{user}/type")
-    Map<String, Object> updateAccount(@PathVariable("user") String username, @RequestBody AccountTypes type) {
-        return Map.of("ok", true, "account", accountService.updateAccountType(username, type));
+    @PutMapping(path = "/type")
+    Map<String, Object> updateAccount(@RequestBody ChangeTypeRequest type) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return Map.of("ok", true, "type",
+                      accountService.updateAccountType(username, type.getType()).getType());
     }
 
-//    @PutMapping(path = "/{user}/type")
-//    void changeAccountType(@PathParam("user") String username, @RequestBody Account account) {
-//        if (!Objects.equals(account.getUsername(), username))
-//            throw new InvalidDataException("Account and path username mismatch!");
-//    }
-//
-//    @PutMapping(path = "/{user}/username")
-//    void changeAccountUsername() {}
-//
-//    @PutMapping(path = "/{user}/password")
-//    void changeAccountPassword() {}
+    @PutMapping(path = "/password")
+    @PreAuthorize("hasRole('ADMIN')")
+    Map<String, Boolean> resetAccountPassword(@RequestBody AccountDetailsRequest account) {
+        Account db = accountService.fetchAccount(account.getUsername(), account.getType());
+        db.setPassword(account.getPassword());
+        accountService.saveAccount(accountService.hashAccount(db));
 
-    @DeleteMapping(path = "/{user}")
-    void deleteAccount() {}
+        return Map.of("ok", true);
+    }
 
-    @DeleteMapping(path = "/auth/{user}/password")
-    void resetAccountPassword() {}
+    @DeleteMapping(path = "/")
+    Map<String, Boolean> deleteAccount() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.deleteAccount(username);
+
+        return Map.of("ok", true);
+    }
 }

@@ -1,54 +1,18 @@
 package xyz.mariosm.bank.service;
 
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import xyz.mariosm.bank.data.Account;
 import xyz.mariosm.bank.data.AccountTypes;
-import xyz.mariosm.bank.exceptions.AccountExistsException;
 import xyz.mariosm.bank.exceptions.AccountNotFoundException;
 import xyz.mariosm.bank.exceptions.InternalServerException;
-import xyz.mariosm.bank.repository.AccountRepository;
 
-@Service
-public class AccountService {
-    private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder;
+public interface AccountService {
+    Account hashAccount(Account account);
 
-    @Autowired
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
-        this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    Account saveAccount(Account account) throws InternalServerException;
 
-    public Account hashAccount(Account account) {
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
-        return account;
-    }
+    void deleteAccount(String account);
 
-    public Account insertAccount(Account account) throws InternalServerException {
-        try {
-            return accountRepository.save(account);
-        } catch (Exception ex) {
-            if (ex instanceof DuplicateKeyException)
-                throw new AccountExistsException(account.getUsername());
-            throw new InternalServerException(ex.getMessage());
-        }
-    }
+    Account fetchAccount(String username, AccountTypes type) throws AccountNotFoundException;
 
-    public Account fetchAccount(String username, AccountTypes type) throws AccountNotFoundException {
-        return accountRepository.findByUsernameAndType(username, type)
-                                .orElseThrow(() -> new AccountNotFoundException(username, type));
-    }
-
-    public Account updateAccountType(String username, AccountTypes type) {
-        Account accountDB = this.accountRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new AccountNotFoundException(username, type));
-
-        accountDB.setType(type);
-        return this.accountRepository.save(accountDB);
-    }
+    Account updateAccountType(String username, AccountTypes type);
 }
