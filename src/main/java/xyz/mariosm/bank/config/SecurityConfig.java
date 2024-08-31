@@ -21,7 +21,7 @@ import xyz.mariosm.bank.service.UserDetailsService;
 
 @Configuration
 @EnableMethodSecurity
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
