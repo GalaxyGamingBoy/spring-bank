@@ -4,6 +4,7 @@ import xyz.mariosm.bank.data.Account;
 import xyz.mariosm.bank.data.AccountTypes;
 import xyz.mariosm.bank.exceptions.AccountNotFoundException;
 import xyz.mariosm.bank.exceptions.InternalServerException;
+import xyz.mariosm.bank.http.AccountDetailsRequest;
 
 public interface AccountService {
     Account hashAccount(Account account);
@@ -15,4 +16,6 @@ public interface AccountService {
     Account fetchAccount(String username, AccountTypes type) throws AccountNotFoundException;
 
     Account updateAccountType(String username, AccountTypes type);
+
+    void promoteAdmin(AccountDetailsRequest detailsRequest);
 }

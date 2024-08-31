@@ -5,10 +5,12 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.mariosm.bank.data.Account;
+import xyz.mariosm.bank.data.AccountRoles;
 import xyz.mariosm.bank.data.AccountTypes;
 import xyz.mariosm.bank.exceptions.AccountExistsException;
 import xyz.mariosm.bank.exceptions.AccountNotFoundException;
 import xyz.mariosm.bank.exceptions.InternalServerException;
+import xyz.mariosm.bank.http.AccountDetailsRequest;
 import xyz.mariosm.bank.repository.AccountRepository;
 
 @Service
@@ -58,5 +60,15 @@ public class AccountServiceImpl implements AccountService {
 
         accountDB.setType(type);
         return this.accountRepository.save(accountDB);
+    }
+
+    @Override
+    public void promoteAdmin(AccountDetailsRequest detailsRequest) {
+        Account account = this.accountRepository
+                .findByUsernameAndType(detailsRequest.getUsername(), detailsRequest.getType())
+                .orElseThrow(() -> new AccountNotFoundException(detailsRequest.getUsername(), detailsRequest.getType()));
+
+        account.setRole(AccountRoles.ADMIN);
+        this.accountRepository.save(account);
     }
 }

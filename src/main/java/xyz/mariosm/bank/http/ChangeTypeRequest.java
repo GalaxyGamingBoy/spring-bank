@@ -1,12 +1,12 @@
 package xyz.mariosm.bank.http;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import xyz.mariosm.bank.data.AccountTypes;
 
 @Data
+@Builder
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class ChangeTypeRequest {
     private @NonNull AccountTypes type;
 }
